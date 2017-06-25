@@ -15,9 +15,9 @@ import java.util.List;
  * <p>
  * to determine the which border to layout puzzle piece.
  *
+ * @author wupanjie
  * @see Block
  * <p>
- * @author wupanjie
  */
 public abstract class PuzzleLayout {
   protected static final String TAG = "PuzzleLayout";
@@ -65,6 +65,14 @@ public abstract class PuzzleLayout {
   }
 
   public abstract void layout();
+
+  public int getHeight() {
+    return outerBlock.height();
+  }
+
+  public int getWidth() {
+    return outerBlock.width();
+  }
 
   protected List<Block> addLine(int position, Line.Direction direction, float ratio) {
     Block block = blocks.get(position);

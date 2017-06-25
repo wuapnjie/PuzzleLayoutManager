@@ -23,11 +23,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
   @Override public void onBindViewHolder(CardViewHolder holder, int position) {
     holder.ivCard.setBackgroundColor(
         Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255)));
-
   }
 
   @Override public int getItemCount() {
-    return 10;
+    return 14;
   }
 
   static class CardViewHolder extends RecyclerView.ViewHolder {
