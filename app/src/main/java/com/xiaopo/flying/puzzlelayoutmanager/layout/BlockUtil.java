@@ -10,32 +10,32 @@ import java.util.List;
 public class BlockUtil {
   private static final String TAG = "BlockUtil";
 
-  public static Line createLine(final Block block, final Line.Direction direction, final float ratio) {
+  public static StraightLine createLine(final Block block, final StraightLine.Direction direction, final float ratio) {
     Point one = new Point();
     Point two = new Point();
-    if (direction == Line.Direction.HORIZONTAL) {
+    if (direction == StraightLine.Direction.HORIZONTAL) {
       one.x = block.left();
       one.y = (int) (block.height() * ratio + block.top());
       two.x = block.right();
       two.y = (int) (block.height() * ratio + block.top());
-    } else if (direction == Line.Direction.VERTICAL) {
+    } else if (direction == StraightLine.Direction.VERTICAL) {
       one.x = (int) (block.width() * ratio + block.left());
       one.y = block.top();
       two.x = (int) (block.width() * ratio + block.left());
       two.y = block.bottom();
     }
 
-    Line line = new Line(one, two);
+    StraightLine line = new StraightLine(one, two);
 
-    if (direction == Line.Direction.HORIZONTAL) {
-      line.setAttachLineStart(block.lineLeft);
-      line.setAttachLineEnd(block.lineRight);
+    if (direction == StraightLine.Direction.HORIZONTAL) {
+      line.setAttachStartLine(block.lineLeft);
+      line.setAttachEndLine(block.lineRight);
 
       line.setUpperLine(block.lineBottom);
       line.setLowerLine(block.lineTop);
-    } else if (direction == Line.Direction.VERTICAL) {
-      line.setAttachLineStart(block.lineTop);
-      line.setAttachLineEnd(block.lineBottom);
+    } else if (direction == StraightLine.Direction.VERTICAL) {
+      line.setAttachStartLine(block.lineTop);
+      line.setAttachEndLine(block.lineBottom);
 
       line.setUpperLine(block.lineRight);
       line.setLowerLine(block.lineLeft);
@@ -44,9 +44,9 @@ public class BlockUtil {
     return line;
   }
 
-  public static List<Block> cutBorder(final Block block, final Line line) {
+  public static List<Block> cutBorder(final Block block, final StraightLine line) {
     List<Block> list = new ArrayList<>();
-    if (line.getDirection() == Line.Direction.HORIZONTAL) {
+    if (line.direction() == StraightLine.Direction.HORIZONTAL) {
       Block one = new Block(block);
       one.lineBottom = line;
       list.add(one);
@@ -54,7 +54,7 @@ public class BlockUtil {
       Block two = new Block(block);
       two.lineTop = line;
       list.add(two);
-    } else if (line.getDirection() == Line.Direction.VERTICAL) {
+    } else if (line.direction() == StraightLine.Direction.VERTICAL) {
       Block one = new Block(block);
       one.lineRight = line;
       list.add(one);
@@ -67,10 +67,10 @@ public class BlockUtil {
     return list;
   }
 
-  public static List<Block> cutBorder(final Block block, final Line l1, final Line l2, final Line l3,
-      Line.Direction direction) {
+  public static List<Block> cutBorder(final Block block, final StraightLine l1, final StraightLine l2, final StraightLine l3,
+      StraightLine.Direction direction) {
     List<Block> list = new ArrayList<>();
-    if (direction == Line.Direction.HORIZONTAL) {
+    if (direction == StraightLine.Direction.HORIZONTAL) {
       Block one = new Block(block);
       one.lineRight = l3;
       one.lineBottom = l1;
@@ -102,7 +102,7 @@ public class BlockUtil {
       six.lineLeft = l3;
       six.lineTop = l2;
       list.add(six);
-    } else if (direction == Line.Direction.VERTICAL) {
+    } else if (direction == StraightLine.Direction.VERTICAL) {
 
       Block one = new Block(block);
       one.lineRight = l1;
@@ -140,10 +140,10 @@ public class BlockUtil {
     return list;
   }
 
-  public static List<Block> cutBorder(final Block block, final Line l1, final Line l2, final Line l3,
-      final Line l4, Line.Direction direction) {
+  public static List<Block> cutBorder(final Block block, final StraightLine l1, final StraightLine l2, final StraightLine l3,
+      final StraightLine l4, StraightLine.Direction direction) {
     List<Block> list = new ArrayList<>();
-    if (direction == Line.Direction.HORIZONTAL) {
+    if (direction == StraightLine.Direction.HORIZONTAL) {
 
       Block one = new Block(block);
       one.lineRight = l4;
@@ -188,7 +188,7 @@ public class BlockUtil {
       eight.lineLeft = l4;
       eight.lineTop = l3;
       list.add(eight);
-    } else if (direction == Line.Direction.VERTICAL) {
+    } else if (direction == StraightLine.Direction.VERTICAL) {
 
       Block one = new Block(block);
       one.lineRight = l1;
@@ -238,8 +238,8 @@ public class BlockUtil {
     return list;
   }
 
-  public static List<Block> cutBorder(final Block block, final Line l1, final Line l2, final Line l3,
-      final Line l4) {
+  public static List<Block> cutBorder(final Block block, final StraightLine l1, final StraightLine l2, final StraightLine l3,
+      final StraightLine l4) {
     List<Block> list = new ArrayList<>();
 
     Block one = new Block(block);
@@ -296,8 +296,8 @@ public class BlockUtil {
     return list;
   }
 
-  public static List<Block> cutBorderCross(final Block block, final Line horizontal,
-      final Line vertical) {
+  public static List<Block> cutBorderCross(final Block block, final StraightLine horizontal,
+      final StraightLine vertical) {
     List<Block> list = new ArrayList<>();
 
     Block one = new Block(block);

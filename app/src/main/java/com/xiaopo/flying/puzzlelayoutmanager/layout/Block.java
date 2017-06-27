@@ -12,14 +12,14 @@ import java.util.List;
  * each block consist of four lines : left,top,right,bottom
  *
  * @author wupanjie
- * @see Line
+ * @see StraightLine
  * <p>
  */
-public class Block {
-  Line lineLeft;
-  Line lineTop;
-  Line lineRight;
-  Line lineBottom;
+public class Block implements Area {
+  StraightLine lineLeft;
+  StraightLine lineTop;
+  StraightLine lineRight;
+  StraightLine lineBottom;
 
   private int paddingLeft;
   private int paddingTop;
@@ -43,33 +43,33 @@ public class Block {
     Point three = new Point(baseRect.left, baseRect.bottom);
     Point four = new Point(baseRect.right, baseRect.bottom);
 
-    lineLeft = new Line(one, three);
-    lineTop = new Line(one, two);
-    lineRight = new Line(two, four);
-    lineBottom = new Line(three, four);
+    lineLeft = new StraightLine(one, three);
+    lineTop = new StraightLine(one, two);
+    lineRight = new StraightLine(two, four);
+    lineBottom = new StraightLine(three, four);
   }
 
-  public int width() {
+  @Override public int width() {
     return right() - left();
   }
 
-  public int height() {
+  @Override public int height() {
     return bottom() - top();
   }
 
-  public int left() {
+  @Override public int left() {
     return lineLeft.start.x + paddingLeft;
   }
 
-  public int top() {
+  @Override public int top() {
     return lineTop.start.y + paddingTop;
   }
 
-  public int right() {
+  @Override public int right() {
     return lineRight.start.x - paddingRight;
   }
 
-  public int bottom() {
+  @Override public int bottom() {
     return lineBottom.start.y - paddingTop;
   }
 
@@ -113,7 +113,7 @@ public class Block {
     this.paddingBottom = paddingBottom;
   }
 
-  public List<Line> getLines() {
+  public List<StraightLine> getLines() {
     return Arrays.asList(lineLeft, lineTop, lineRight, lineBottom);
   }
 
@@ -121,7 +121,7 @@ public class Block {
     return new RectF(left(), top(), right(), bottom());
   }
 
-  public boolean contains(Line line) {
+  public boolean contains(StraightLine line) {
     return lineLeft == line || lineTop == line || lineRight == line || lineBottom == line;
   }
 

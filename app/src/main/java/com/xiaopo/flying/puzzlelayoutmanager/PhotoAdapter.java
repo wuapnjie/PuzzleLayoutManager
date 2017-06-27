@@ -26,7 +26,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.CardViewHold
   }
 
   @Override public void onBindViewHolder(CardViewHolder holder, int position) {
-    Log.d("Adapter", "onBindViewHolder: path --> " + "file:///" + data.get(position).getPath());
     Picasso.with(holder.itemView.getContext())
         .load(new File(data.get(position).getPath()))
         .centerInside()
