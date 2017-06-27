@@ -1,14 +1,15 @@
 package com.nightmare.library;
 
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import java.util.List;
 
 /**
  * @author wupanjie
  */
 
-public interface PuzzleLayout {
-  void setOuterBounds(Rect bounds);
+public interface PuzzleLayout extends Area {
+  void setOuterBounds(@NonNull Rect bounds);
 
   void layout();
 
@@ -25,8 +26,4 @@ public interface PuzzleLayout {
   void reset();
 
   Area getArea(int position);
-
-  float width();
-
-  float height();
 }

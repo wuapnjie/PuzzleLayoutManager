@@ -1,6 +1,7 @@
 package com.xiaopo.flying.puzzlelayoutmanager;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.CardViewHold
   private List<Photo> data;
 
   @Override public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    Log.d("Puzzle", "onCreateViewHolder: ");
     View itemView =
         LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
     return new CardViewHolder(itemView);
   }
 
   @Override public void onBindViewHolder(CardViewHolder holder, int position) {
+    Log.d("Puzzle", "onBindViewHolder: ");
     Picasso.with(holder.itemView.getContext())
         .load(new File(data.get(position).getPath()))
         .centerInside()

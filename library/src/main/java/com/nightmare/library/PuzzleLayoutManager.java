@@ -1,6 +1,7 @@
 package com.nightmare.library;
 
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,9 +30,9 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
   private int totalLength;
   private int totalPuzzleSize = 0;
 
-  private List<RadioPuzzleLayout> puzzleLayouts = new ArrayList<>();
-  private Map<Range, RadioPuzzleLayout> rangePuzzleLayoutMap = new HashMap<>();
-  private SparseArray<View> currentViews = new SparseArray<>();
+  @NonNull private List<RadioPuzzleLayout> puzzleLayouts = new ArrayList<>();
+  @NonNull private Map<Range, RadioPuzzleLayout> rangePuzzleLayoutMap = new HashMap<>();
+  @NonNull private SparseArray<View> currentViews = new SparseArray<>();
 
   private Rect tempRect = new Rect();
   private Range viewRange = new Range();
@@ -67,10 +68,12 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
   }
 
   private void fill(RecyclerView.Recycler recycler, RecyclerView.State state) {
+    int visibleChildCount = getVisibleChildCount();
     int startIndex = calculateFirstArea();
     int endIndex = calculateLastArea();
-    Log.d(TAG, "fill: first area --> " + startIndex);
-    Log.d(TAG, "fill: last area --> " + endIndex);
+    //Log.d(TAG, "fill: first area --> " + startIndex);
+    //Log.d(TAG, "fill: last area --> " + endIndex);
+
     viewRange.set(startIndex, endIndex);
     for (int i = 0; i < currentViews.size(); i++) {
       int key = currentViews.keyAt(i);
@@ -90,41 +93,85 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
       int positionInPuzzle = i - range.start;
       Area area = puzzleLayout.getArea(positionInPuzzle);
 
-      //这里就是从缓存里面取出
+      // 这里就是从缓存里面取出
       View view = recycler.getViewForPosition(i);
+
+      // 回收在序列中但不可见区域的View
+      if (!isAreaVisible(area)) {
+        recycler.recycleView(view);
+        continue;
+      }
       //将View加入到RecyclerView中
       addView(view);
 
       currentViews.put(i, view);
+
       RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
       layoutParams.width = area.width();
       layoutParams.height = area.height();
-      // TODO
-      measureChildWithMargins(view, 0, 0);
-      //view.measure(View.MeasureSpec.makeMeasureSpec(area.width(), View.MeasureSpec.EXACTLY),
-      //    View.MeasureSpec.makeMeasureSpec(area.height(), View.MeasureSpec.EXACTLY));
-      //最后，将View布局
-      //layoutDecorated(view, 0, offsetY, width, offsetY + height);
+
       measureChildWithMargins(view, 0, 0);
       layoutDecorated(view, area.left(), area.top() - verticalScrollOffset, area.right(),
           area.bottom() - verticalScrollOffset);
-      Log.d(TAG, "fill: verticalScrollOffset --> " + verticalScrollOffset);
-      Log.d(TAG, "fill: area --> "
-          + "left : "
-          + area.left()
-          + ",top : "
-          + area.top()
-          + ",right : "
-          + area.right()
-          + ",bottom : "
-          + area.bottom());
     }
 
-    //Log.d(TAG, "fill: finish --> " + recycler.getScrapList().size());
+    // Log.d(TAG, "fill: area --> "
+    //    + "left : "
+    //    + area.left()
+    //    + ",top : "
+    //    + area.top()
+    //    + ",right : "
+    //    + area.right()
+    //    + ",bottom : "
+    //    + area.bottom());
   }
 
   /**
-   * TODO 现在这种算法可能会导致同个PuzzleLayout内有些不可见的Area也被包括进来
+   * 获取当前可见的View数量
+   *
+   * @return 当前可见的View数量
+   */
+  private int getVisibleChildCount() {
+    int first = 0;
+    int last = 0;
+    int height = 0;
+    int visibleCount = 0;
+
+    for (int i = 0; i < puzzleLayouts.size(); i++) {
+      PuzzleLayout puzzleLayout = puzzleLayouts.get(i);
+      height += puzzleLayout.height();
+      if (height > verticalScrollOffset) {
+        first = i;
+        break;
+      }
+    }
+
+    for (int i = first; i < puzzleLayouts.size(); i++) {
+      if (height > verticalScrollOffset + getVerticalSpace()) {
+        last = i;
+        break;
+      }
+      PuzzleLayout puzzleLayout = puzzleLayouts.get(i);
+      height += puzzleLayout.height();
+    }
+
+    for (int i = first; i <= last; i++) {
+      PuzzleLayout puzzleLayout = puzzleLayouts.get(i);
+      for (int j = 0; j < puzzleLayout.getAreaCount(); j++) {
+        if (isAreaVisible(puzzleLayout.getArea(j))) {
+          visibleCount++;
+        }
+      }
+    }
+
+    //Log.d(TAG, "getVisibleChildCount: first --> " + first);
+    //Log.d(TAG, "getVisibleChildCount: last --> " + last);
+    //Log.d(TAG, "getVisibleChildCount: visible --> " + visibleCount);
+
+    return visibleCount;
+  }
+
+  /**
    * 如下，1是第一个可见的Area，但此时2可能不可见
    * -----------
    * |   |  2  |
@@ -153,7 +200,7 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
   }
 
   /**
-   * TODO 同上
+   * 返回最后一个可见的Area的position
    *
    * @return 最后一个可见的Area
    */
@@ -177,9 +224,20 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     return index;
   }
 
+  private boolean isAreaVisible(Area area) {
+    if (orientation == VERTICAL) {
+      return (area.top() - verticalScrollOffset > 0
+          && area.top() - verticalScrollOffset < getVerticalSpace()) || (area.bottom()
+          - verticalScrollOffset > 0 && area.bottom() - verticalScrollOffset < getVerticalSpace());
+    } else {
+      // TODO 横向滑动
+      return false;
+    }
+  }
+
   @Override
   public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
-    Log.d(TAG, "scrollVerticallyBy: dy --> " + dy);
+    //Log.d(TAG, "scrollVerticallyBy: dy --> " + dy);
     //实际要滑动的距离
     int travel = dy;
 
@@ -197,6 +255,9 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
 
     detachAndScrapAttachedViews(recycler);
     fill(recycler, state);
+
+    Log.d(TAG, "fill: scrapSize -->" + recycler.getScrapList().size());
+    Log.d(TAG, "fill: childCount -->" + getChildCount());
 
     return travel;
   }
@@ -244,21 +305,25 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     return range == null ? null : rangePuzzleLayoutMap.get(range);
   }
 
-  // TODO this is just simple method
   private int calculateTotalLength() {
-    return getHorizontalSpace() * puzzleLayouts.size();
+    return puzzleLayouts.isEmpty() ? 0 : puzzleLayouts.get(puzzleLayouts.size() - 1).bottom();
   }
 
   private void layoutPuzzle() {
     int left = getPaddingLeft();
     int top = getPaddingTop();
-    // TODO 暂时每个PuzzleLayout为正方形
-    int width = getHorizontalSpace();
-    int height = getHorizontalSpace();
+
+    int length = orientation == VERTICAL ? getHorizontalSpace() : getVerticalSpace();
 
     for (RadioPuzzleLayout layout : puzzleLayouts) {
-      tempRect.set(left, top, left + width, top + height);
-      top += height;
+
+      if (orientation == VERTICAL) {
+        tempRect.set(left, top, left + length, top + (int) (length * layout.getRadio()));
+        top += (int) (length * layout.getRadio());
+      } else {
+        tempRect.set(left, top, left + (int) (length * layout.getRadio()), top + length);
+        left += (int) (length * layout.getRadio());
+      }
       layout.setOuterBounds(tempRect);
       layout.reset();
       layout.layout();

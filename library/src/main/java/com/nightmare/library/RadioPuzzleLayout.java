@@ -2,6 +2,7 @@ package com.nightmare.library;
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,19 +29,25 @@ public abstract class RadioPuzzleLayout implements PuzzleLayout {
   private List<Line> lines = new ArrayList<>();
   private List<Line> outerLines = new ArrayList<>(4);
 
+  private float radio = 1f;
+
   private Comparator<Block> borderComparator = new BlockComparator();
 
-  public RadioPuzzleLayout() {
+  public RadioPuzzleLayout(float radio) {
+    this.radio = radio;
     setOuterBounds(new Rect());
     layout();
   }
 
-  public RadioPuzzleLayout(Rect baseRect) {
-    setOuterBounds(baseRect);
-    layout();
+  public void setRadio(float radio) {
+    this.radio = radio;
   }
 
-  @Override public void setOuterBounds(Rect bounds) {
+  public float getRadio() {
+    return radio;
+  }
+
+  @Override public void setOuterBounds(@NonNull Rect bounds) {
     Point one = new Point(bounds.left, bounds.top);
     Point two = new Point(bounds.right, bounds.top);
     Point three = new Point(bounds.left, bounds.bottom);
@@ -391,12 +398,28 @@ public abstract class RadioPuzzleLayout implements PuzzleLayout {
     return blocks.get(position);
   }
 
-  @Override public float width() {
+  @Override public int width() {
     return outerBlock.width();
   }
 
-  @Override public float height() {
+  @Override public int height() {
     return outerBlock.height();
+  }
+
+  @Override public int left() {
+    return outerBlock.left();
+  }
+
+  @Override public int top() {
+    return outerBlock.top();
+  }
+
+  @Override public int right() {
+    return outerBlock.right();
+  }
+
+  @Override public int bottom() {
+    return outerBlock.bottom();
   }
 
   @Override public List<Line> getLines() {

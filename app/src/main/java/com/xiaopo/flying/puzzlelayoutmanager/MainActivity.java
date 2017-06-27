@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import com.nightmare.library.PuzzleLayoutManager;
 import com.xiaopo.flying.puzzlelayoutmanager.model.Photo;
@@ -31,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
     puzzleList = (RecyclerView) findViewById(R.id.puzzle_list);
 
     PuzzleLayoutManager puzzleLayoutManager = new PuzzleLayoutManager();
-    puzzleLayoutManager.addPuzzleLayout(new FirstPuzzleLayout());
-    puzzleLayoutManager.addPuzzleLayout(new SecondPuzzleLayout());
-    puzzleLayoutManager.addPuzzleLayout(new ThirdPuzzleLayout());
-    puzzleLayoutManager.addPuzzleLayout(new ForthPuzzleLayout());
+    puzzleLayoutManager.addPuzzleLayout(new FirstPuzzleLayout(1.2f));
+    puzzleLayoutManager.addPuzzleLayout(new SecondPuzzleLayout(1.4f));
+    puzzleLayoutManager.addPuzzleLayout(new ThirdPuzzleLayout(1.3f));
+    puzzleLayoutManager.addPuzzleLayout(new ForthPuzzleLayout(1.1f));
     puzzleList.setLayoutManager(puzzleLayoutManager);
     adapter = new PhotoAdapter();
     puzzleList.setAdapter(adapter);
