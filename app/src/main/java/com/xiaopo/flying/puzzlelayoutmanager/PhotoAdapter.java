@@ -2,17 +2,22 @@ package com.xiaopo.flying.puzzlelayoutmanager;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import com.squareup.picasso.Picasso;
+import com.xiaopo.flying.puzzlelayoutmanager.model.Photo;
+import java.io.File;
+import java.util.List;
 import java.util.Random;
 
 /**
  * @author wupanjie
  */
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
-  private Random random = new Random();
+public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.CardViewHolder> {
+  private List<Photo> data;
 
   @Override public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View itemView =
@@ -21,12 +26,21 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
   }
 
   @Override public void onBindViewHolder(CardViewHolder holder, int position) {
-    holder.ivCard.setBackgroundColor(
-        Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255)));
+    Log.d("Adapter", "onBindViewHolder: path --> " + "file:///" + data.get(position).getPath());
+    Picasso.with(holder.itemView.getContext())
+        .load(new File(data.get(position).getPath()))
+        .centerInside()
+        .fit()
+        .into(holder.ivCard);
   }
 
   @Override public int getItemCount() {
-    return 14;
+    return data == null ? 0 : data.size();
+  }
+
+  public void refreshData(List<Photo> photos) {
+    this.data = photos;
+    notifyDataSetChanged();
   }
 
   static class CardViewHolder extends RecyclerView.ViewHolder {

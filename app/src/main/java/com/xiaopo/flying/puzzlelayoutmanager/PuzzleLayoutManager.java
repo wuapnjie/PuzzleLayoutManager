@@ -94,6 +94,7 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
       //layoutDecorated(view, 0, offsetY, width, offsetY + height);
       layoutDecorated(view, block.left(), block.top() - verticalScrollOffset, block.right(),
           block.bottom() - verticalScrollOffset);
+      Log.d(TAG, "fill: verticalScrollOffset --> " + verticalScrollOffset);
       //Log.d(TAG, "fill: block --> "
       //    + "left : "
       //    + block.left()
@@ -165,7 +166,7 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
 
   @Override
   public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
-    //Log.d(TAG, "scrollVerticallyBy: dy --> " + dy);
+    Log.d(TAG, "scrollVerticallyBy: dy --> " + dy);
     //实际要滑动的距离
     int travel = dy;
 
