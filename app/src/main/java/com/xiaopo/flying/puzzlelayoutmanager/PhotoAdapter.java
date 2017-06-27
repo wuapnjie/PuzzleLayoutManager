@@ -14,17 +14,17 @@ import java.util.List;
 /**
  * @author wupanjie
  */
-public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.CardViewHolder> {
+public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
   private List<Photo> data;
 
-  @Override public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     Log.d("Puzzle", "onCreateViewHolder: ");
     View itemView =
         LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
-    return new CardViewHolder(itemView);
+    return new PhotoViewHolder(itemView);
   }
 
-  @Override public void onBindViewHolder(CardViewHolder holder, int position) {
+  @Override public void onBindViewHolder(PhotoViewHolder holder, int position) {
     Log.d("Puzzle", "onBindViewHolder: ");
     Picasso.with(holder.itemView.getContext())
         .load(new File(data.get(position).getPath()))
@@ -42,10 +42,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.CardViewHold
     notifyDataSetChanged();
   }
 
-  static class CardViewHolder extends RecyclerView.ViewHolder {
-    private ImageView ivCard;
+  static class PhotoViewHolder extends RecyclerView.ViewHolder {
+    ImageView ivCard;
 
-    public CardViewHolder(View itemView) {
+    public PhotoViewHolder(View itemView) {
       super(itemView);
       ivCard = (ImageView) itemView.findViewById(R.id.iv_card);
     }

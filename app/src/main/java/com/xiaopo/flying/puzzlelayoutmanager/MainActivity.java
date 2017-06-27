@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     }.execute(new PhotoManager(this));
   }
 
-  private static class GetAllPhotoTask extends AsyncTask<PhotoManager, Integer, List<Photo>> {
+  static class GetAllPhotoTask extends AsyncTask<PhotoManager, Integer, List<Photo>> {
     @Override protected List<Photo> doInBackground(PhotoManager... params) {
       return params[0].getAllPhoto();
     }
