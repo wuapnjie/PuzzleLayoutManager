@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzlelayoutmanager.layout;
+package com.nightmare.library;
 
 import android.graphics.Point;
 import android.util.Log;
@@ -29,26 +29,16 @@ public class StraightLine implements Line {
 
   @Override public String toString() {
 
-    StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.append("The line is ")
-        .append(direction.name())
-        .append(",start point is ")
-        .append(start)
-        .append(",end point is ")
-        .append(end)
-        .append(",length is ")
-        .append(length())
-        .append("\n");
-
-    if (attachLineStart != null) {
-      stringBuilder.append("\n").append("attachLineStart is ").append(attachLineStart.toString());
-    }
-
-    if (attachLineEnd != null) {
-      stringBuilder.append("\n").append("attachLineEnd is ").append(attachLineEnd.toString());
-    }
-
-    return stringBuilder.append("\n").toString();
+    return "The line is "
+        + direction.name()
+        + ",start point is "
+        + start
+        + ",end point is "
+        + end
+        + ",length is "
+        + length()
+        + "\n"
+        + "\n";
   }
 
   public StraightLine(Point start, Point end) {

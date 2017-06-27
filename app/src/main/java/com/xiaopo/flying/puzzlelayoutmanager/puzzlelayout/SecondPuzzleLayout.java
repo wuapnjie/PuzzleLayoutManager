@@ -1,6 +1,6 @@
 package com.xiaopo.flying.puzzlelayoutmanager.puzzlelayout;
 
-import com.xiaopo.flying.puzzlelayoutmanager.layout.RadioPuzzleLayout;
+import com.nightmare.library.RadioPuzzleLayout;
 
 /**
  * @author wupanjie

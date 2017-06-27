@@ -1,8 +1,6 @@
-package com.xiaopo.flying.puzzlelayoutmanager;
+package com.nightmare.library;
 
 import android.graphics.Rect;
-import com.xiaopo.flying.puzzlelayoutmanager.layout.Area;
-import com.xiaopo.flying.puzzlelayoutmanager.layout.Line;
 import java.util.List;
 
 /**

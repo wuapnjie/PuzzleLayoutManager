@@ -1,10 +1,9 @@
-package com.xiaopo.flying.puzzlelayoutmanager;
+package com.xiaopo.flying.puzzlelayoutmanager.model;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import com.xiaopo.flying.puzzlelayoutmanager.model.Photo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,20 +14,17 @@ import java.util.List;
  * Created by Flying SnowBean on 2015/11/19.
  */
 public class PhotoManager {
-  private final String TAG = PhotoManager.class.getSimpleName();
-  private ContentResolver mContentResolver;
-  private List<String> mBucketIds;
+  private ContentResolver contentResolver;
 
   public PhotoManager(Context context) {
-    mContentResolver = context.getContentResolver();
-    mBucketIds = new ArrayList<>();
+    contentResolver = context.getContentResolver();
   }
 
   public List<Photo> getAllPhoto() {
     List<Photo> photos = new ArrayList<>();
 
-    Cursor cursor = mContentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        new String[] {
+    Cursor cursor =
+        contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] {
             MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.DATE_MODIFIED
         }, null, null, MediaStore.Images.Media.DATE_MODIFIED);

@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzlelayoutmanager;
+package com.nightmare.library;
 
 import android.graphics.Rect;
 import android.support.v7.widget.OrientationHelper;
@@ -7,8 +7,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
-import com.xiaopo.flying.puzzlelayoutmanager.layout.Area;
-import com.xiaopo.flying.puzzlelayoutmanager.layout.RadioPuzzleLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,15 +109,15 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
       layoutDecorated(view, area.left(), area.top() - verticalScrollOffset, area.right(),
           area.bottom() - verticalScrollOffset);
       Log.d(TAG, "fill: verticalScrollOffset --> " + verticalScrollOffset);
-      //Log.d(TAG, "fill: area --> "
-      //    + "left : "
-      //    + area.left()
-      //    + ",top : "
-      //    + area.top()
-      //    + ",right : "
-      //    + area.right()
-      //    + ",bottom : "
-      //    + area.bottom());
+      Log.d(TAG, "fill: area --> "
+          + "left : "
+          + area.left()
+          + ",top : "
+          + area.top()
+          + ",right : "
+          + area.right()
+          + ",bottom : "
+          + area.bottom());
     }
 
     //Log.d(TAG, "fill: finish --> " + recycler.getScrapList().size());

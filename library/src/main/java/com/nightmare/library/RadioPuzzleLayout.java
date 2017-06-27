@@ -1,10 +1,8 @@
-package com.xiaopo.flying.puzzlelayoutmanager.layout;
+package com.nightmare.library;
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.util.Log;
-import com.xiaopo.flying.puzzlelayoutmanager.PuzzleLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -245,14 +243,17 @@ public abstract class RadioPuzzleLayout implements PuzzleLayout {
     int width = block.width();
     int height = block.height();
 
-    Point one = new Point(0, height / 3);
-    Point two = new Point(width / 3 * 2, 0);
-    Point three = new Point(width, height / 3 * 2);
-    Point four = new Point(width / 3, height);
-    Point five = new Point(width / 3, height / 3);
-    Point six = new Point(width / 3 * 2, height / 3);
-    Point seven = new Point(width / 3 * 2, height / 3 * 2);
-    Point eight = new Point(width / 3, height / 3 * 2);
+    int left = block.left();
+    int top = block.top();
+
+    Point one = new Point(left, top + height / 3);
+    Point two = new Point(left + width / 3 * 2, top);
+    Point three = new Point(left + width, top + height / 3 * 2);
+    Point four = new Point(left + width / 3, top + height);
+    Point five = new Point(left + width / 3, top + height / 3);
+    Point six = new Point(left + width / 3 * 2, top + height / 3);
+    Point seven = new Point(left + width / 3 * 2, top + height / 3 * 2);
+    Point eight = new Point(left + width / 3, top + height / 3 * 2);
 
     StraightLine l1 = new StraightLine(one, six);
     StraightLine l2 = new StraightLine(two, seven);

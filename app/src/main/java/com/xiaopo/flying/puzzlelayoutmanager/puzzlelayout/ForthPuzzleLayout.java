@@ -5,8 +5,8 @@ import com.nightmare.library.RadioPuzzleLayout;
 /**
  * @author wupanjie
  */
-public class FirstPuzzleLayout extends RadioPuzzleLayout {
+public class ForthPuzzleLayout extends RadioPuzzleLayout {
   @Override public void layout() {
-    addCross(0,0.5f);
+    cutSpiral(0);
   }
 }

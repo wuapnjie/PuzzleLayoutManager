@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzlelayoutmanager.layout;
+package com.nightmare.library;
 
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -117,8 +117,8 @@ public class Block implements Area {
     return Arrays.asList(lineLeft, lineTop, lineRight, lineBottom);
   }
 
-  public RectF getRect() {
-    return new RectF(left(), top(), right(), bottom());
+  public Rect getRect() {
+    return new Rect(left(), top(), right(), bottom());
   }
 
   public boolean contains(StraightLine line) {
@@ -126,15 +126,6 @@ public class Block implements Area {
   }
 
   @Override public String toString() {
-    return "left line:\n"
-        + lineLeft.toString()
-        + "\ntop line:\n"
-        + lineTop.toString()
-        + "\nright line:\n"
-        + lineRight.toString()
-        + "\nbottom line:\n"
-        + lineBottom.toString()
-        + "\nthe rect is \n"
-        + getRect().toString();  //TODO
+    return getRect().toString();  //TODO
   }
 }
