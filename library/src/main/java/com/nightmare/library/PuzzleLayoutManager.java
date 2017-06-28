@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * TODO PuzzleLayout重复直至AreaCount > ItemCount
  * 自定义的LayoutManager，其布局效果由一系列的PuzzleLayout决定
  *
  * @author wupanjie
@@ -117,8 +118,8 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
         measureChildWithMargins(view, 0, 0);
 
         if (orientation == VERTICAL) {
-          layoutDecoratedWithMargins(view, area.left(), area.top() - verticalScrollOffset, area.right(),
-              area.bottom() - verticalScrollOffset);
+          layoutDecoratedWithMargins(view, area.left(), area.top() - verticalScrollOffset,
+              area.right(), area.bottom() - verticalScrollOffset);
         } else {
           layoutDecoratedWithMargins(view, area.left() - horizontalScrollOffset, area.top(),
               area.right() - horizontalScrollOffset, area.bottom());
@@ -369,6 +370,7 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     return range == null ? null : range.puzzleLayout;
   }
 
+  // TODO 总长度计算
   private int calculateTotalLength() {
     if (orientation == VERTICAL) {
       return puzzleLayouts.isEmpty() ? 0 : puzzleLayouts.get(puzzleLayouts.size() - 1).bottom();
