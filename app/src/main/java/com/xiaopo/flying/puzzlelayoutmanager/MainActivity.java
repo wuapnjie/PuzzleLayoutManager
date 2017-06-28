@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     puzzleList = (RecyclerView) findViewById(R.id.puzzle_list);
 
     PuzzleLayoutManager puzzleLayoutManager = new PuzzleLayoutManager();
-    puzzleLayoutManager.setOrientation(PuzzleLayoutManager.HORIZONTAL);
+    puzzleLayoutManager.setOrientation(PuzzleLayoutManager.VERTICAL);
     puzzleLayoutManager.addPuzzleLayout(new FirstPuzzleLayout(1.2f));
     puzzleLayoutManager.addPuzzleLayout(new SecondPuzzleLayout(1.4f));
     puzzleLayoutManager.addPuzzleLayout(new ThirdPuzzleLayout(1.3f));

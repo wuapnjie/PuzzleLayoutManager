@@ -62,7 +62,7 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     // 则将高度设置为RecyclerView的高度
     totalLength = Math.max(totalLength, getVerticalSpace());
 
-    //onLayoutChildren方法在RecyclerView 初始化时 会执行两遍
+    // onLayoutChildren方法在RecyclerView 初始化时 会执行两遍
     detachAndScrapAttachedViews(recycler);
 
     fill(recycler, state);
@@ -74,6 +74,7 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     for (int i = 0; i < getChildCount(); i++) {
       View view = getChildAt(i);
       int position = getPosition(view);
+      //Log.d(TAG, "fill: position --> " + position);
       viewCache.put(position, view);
     }
 
@@ -81,12 +82,12 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
       detachView(viewCache.valueAt(i));
     }
 
-    firstVisibleItemPosition = calculateFirstArea();
-    lastVisibleItemPosition = calculateLastArea();
-    Log.d(TAG, "fill visible: first --> " + firstVisibleItemPosition);
-    Log.d(TAG, "fill visible: last --> " + lastVisibleItemPosition);
+    firstVisibleItemPosition = findFirstItemInFirstVisiblePuzzleLayout();
+    lastVisibleItemPosition = findLastItemInLastVisiblePuzzleLayout();
+    //Log.d(TAG, "fill visible: first --> " + firstVisibleItemPosition);
+    //Log.d(TAG, "fill visible: last --> " + lastVisibleItemPosition);
 
-    for (int i = firstVisibleItemPosition; i < lastVisibleItemPosition; i++) {
+    for (int i = firstVisibleItemPosition; i <= lastVisibleItemPosition; i++) {
       Range range = getContainsRange(i);
       RadioPuzzleLayout puzzleLayout = rangePuzzleLayoutMap.get(range);
 
@@ -95,12 +96,14 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
       int positionInPuzzle = i - range.start;
       Area area = puzzleLayout.getArea(positionInPuzzle);
 
+      if (!isAreaVisible(area)) {
+        continue;
+      }
+
       View view = viewCache.get(i);
       if (view != null) {
-        if (isAreaVisible(area)) {
-          attachView(view);
-          viewCache.remove(i);
-        }
+        attachView(view);
+        viewCache.remove(i);
       } else {
         view = recycler.getViewForPosition(i);
         addView(view);
@@ -121,13 +124,13 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
       }
     }
 
-    Log.d(TAG, "fill: viewCache size --> " + viewCache.size());
+    //Log.d(TAG, "fill: viewCache size --> " + viewCache.size());
     for (int i = 0; i < viewCache.size(); i++) {
       recycler.recycleView(viewCache.valueAt(i));
     }
 
-    Log.d(TAG, "fill: childCount --> " + getChildCount());
-    Log.d(TAG, "fill: scrapSize --> " + recycler.getScrapList().size());
+    //Log.d(TAG, "fill: childCount --> " + getChildCount());
+    //Log.d(TAG, "fill: scrapSize --> " + recycler.getScrapList().size());
   }
 
   /**
@@ -169,6 +172,50 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     }
 
     return visibleCount;
+  }
+
+  /**
+   * 找到第一个可见的PuzzleLayout中的最后一块区域索引
+   *
+   * @return 第一个可见的PuzzleLayout中的第一块区域索引
+   */
+  private int findFirstItemInFirstVisiblePuzzleLayout() {
+    int index = 0;
+    int length = 0;
+    int limit = orientation == VERTICAL ? verticalScrollOffset : horizontalScrollOffset;
+
+    for (int i = 0; i < puzzleLayouts.size(); i++) {
+      PuzzleLayout puzzleLayout = puzzleLayouts.get(i);
+      length += orientation == VERTICAL ? puzzleLayout.height() : puzzleLayout.width();
+      if (length >= limit) {
+        break;
+      }
+      index += puzzleLayout.getAreaCount();
+    }
+
+    return index;
+  }
+
+  /**
+   * 找到最后一个可见的PuzzleLayout中的最后一块区域索引
+   *
+   * @return 最后一个可见的PuzzleLayout中的最后一块区域索引
+   */
+  private int findLastItemInLastVisiblePuzzleLayout() {
+    int length = 0;
+    int index = 0;
+    int limit = orientation == VERTICAL ? verticalScrollOffset + getVerticalSpace()
+        : horizontalScrollOffset + getHorizontalSpace();
+
+    for (int i = 0; i < puzzleLayouts.size(); i++) {
+      PuzzleLayout puzzleLayout = puzzleLayouts.get(i);
+      length += orientation == VERTICAL ? puzzleLayout.height() : puzzleLayout.width();
+      index += puzzleLayout.getAreaCount();
+      if (length >= limit) {
+        break;
+      }
+    }
+    return index - 1;
   }
 
   /**
@@ -231,17 +278,13 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     return index;
   }
 
-  // TODO 子View超过一屏
   private boolean isAreaVisible(Area area) {
     if (orientation == VERTICAL) {
-      return (area.top() - verticalScrollOffset > 0
-          && area.top() - verticalScrollOffset < getVerticalSpace()) || (area.bottom()
-          - verticalScrollOffset > 0 && area.bottom() - verticalScrollOffset < getVerticalSpace());
+      return !((area.bottom() - verticalScrollOffset) <= 0
+          || (area.top() - verticalScrollOffset) >= getVerticalSpace());
     } else {
-      return (area.left() - horizontalScrollOffset > 0
-          && area.left() - horizontalScrollOffset < getHorizontalSpace()) || (area.right()
-          - horizontalScrollOffset > 0
-          && area.right() - horizontalScrollOffset < getHorizontalSpace());
+      return !((area.right() - horizontalScrollOffset) <= 0
+          || (area.left() - horizontalScrollOffset) >= getHorizontalSpace());
     }
   }
 
