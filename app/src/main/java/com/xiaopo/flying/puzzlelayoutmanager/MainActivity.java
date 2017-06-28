@@ -9,7 +9,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import com.nightmare.library.PuzzleLayoutManager;
 import com.xiaopo.flying.puzzlelayoutmanager.model.Photo;
@@ -49,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
         outRect.top = 10;
       }
     });
+    //puzzleList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    //  @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    //    super.onScrolled(recyclerView, dx, dy);
+    //    Log.d("Puzzle", "onScrolled: childCount --> " + recyclerView.getChildCount());
+    //  }
+    //});
 
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
         != PackageManager.PERMISSION_GRANTED) {

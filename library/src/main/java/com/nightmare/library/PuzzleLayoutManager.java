@@ -4,17 +4,14 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * TODO 在滑动过程中产生了太多的HashMap的Key迭代器
+ * 自定义的LayoutManager，其布局效果由一系列的PuzzleLayout决定
  *
  * @author wupanjie
  */
@@ -24,20 +21,16 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
   public static final int HORIZONTAL = OrientationHelper.HORIZONTAL;
   public static final int VERTICAL = OrientationHelper.VERTICAL;
 
+  @NonNull private List<RadioPuzzleLayout> puzzleLayouts = new ArrayList<>();
+  @NonNull private List<Range> ranges = new ArrayList<>();
+  @NonNull private SparseArray<View> viewCache = new SparseArray<>();
+  @NonNull private Rect tempRect = new Rect();
+
   private int verticalScrollOffset;
   private int horizontalScrollOffset;
 
   private int totalLength;
   private int totalPuzzleSize = 0;
-
-  private int firstVisibleItemPosition;
-  private int lastVisibleItemPosition;
-
-  @NonNull private List<RadioPuzzleLayout> puzzleLayouts = new ArrayList<>();
-  @NonNull private Map<Range, RadioPuzzleLayout> rangePuzzleLayoutMap = new HashMap<>();
-  @NonNull private SparseArray<View> viewCache = new SparseArray<>();
-
-  private Rect tempRect = new Rect();
 
   private int orientation = VERTICAL;
 
@@ -47,8 +40,8 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
   }
 
   @Override public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
-    if (getItemCount() == 0) {//没有Item，界面空着吧
-      detachAndScrapAttachedViews(recycler);
+    if (getItemCount() == 0) {
+      removeAndRecycleAllViews(recycler);
       return;
     }
     if (getChildCount() == 0 && state.isPreLayout()) {//state.isPreLayout()是支持动画的
@@ -58,7 +51,7 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     totalLength = 0;
     layoutPuzzle();
     totalLength = calculateTotalLength();
-    // 如果所有子View的高度和没有填满RecyclerView的高度，
+    // 如果所有子View的高度和没有填满RecyclerView的高度
     // 则将高度设置为RecyclerView的高度
     totalLength = Math.max(totalLength, getVerticalSpace());
 
@@ -74,7 +67,6 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     for (int i = 0; i < getChildCount(); i++) {
       View view = getChildAt(i);
       int position = getPosition(view);
-      //Log.d(TAG, "fill: position --> " + position);
       viewCache.put(position, view);
     }
 
@@ -82,16 +74,14 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
       detachView(viewCache.valueAt(i));
     }
 
-    firstVisibleItemPosition = findFirstItemInFirstVisiblePuzzleLayout();
-    lastVisibleItemPosition = findLastItemInLastVisiblePuzzleLayout();
-    //Log.d(TAG, "fill visible: first --> " + firstVisibleItemPosition);
-    //Log.d(TAG, "fill visible: last --> " + lastVisibleItemPosition);
+    int first = findFirstItemInFirstVisiblePuzzleLayout();
+    int last = findLastItemInLastVisiblePuzzleLayout();
 
-    for (int i = firstVisibleItemPosition; i <= lastVisibleItemPosition; i++) {
+    for (int i = first; i <= last; i++) {
       Range range = getContainsRange(i);
-      RadioPuzzleLayout puzzleLayout = rangePuzzleLayoutMap.get(range);
+      if (range == null || range.puzzleLayout == null) continue;
 
-      if (range == null || puzzleLayout == null) continue;
+      PuzzleLayout puzzleLayout = range.puzzleLayout;
 
       int positionInPuzzle = i - range.start;
       Area area = puzzleLayout.getArea(positionInPuzzle);
@@ -124,13 +114,9 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
       }
     }
 
-    //Log.d(TAG, "fill: viewCache size --> " + viewCache.size());
     for (int i = 0; i < viewCache.size(); i++) {
       recycler.recycleView(viewCache.valueAt(i));
     }
-
-    //Log.d(TAG, "fill: childCount --> " + getChildCount());
-    //Log.d(TAG, "fill: scrapSize --> " + recycler.getScrapList().size());
   }
 
   /**
@@ -290,7 +276,6 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
 
   @Override
   public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
-    //Log.d(TAG, "scrollVerticallyBy: dy --> " + dy);
     //实际要滑动的距离
     int travel = dy;
 
@@ -313,7 +298,6 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
 
   @Override public int scrollHorizontallyBy(int dx, RecyclerView.Recycler recycler,
       RecyclerView.State state) {
-    // TODO 横向滑动支持
     //实际要滑动的距离
     int travel = dx;
 
@@ -353,12 +337,14 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
   public void addPuzzleLayout(RadioPuzzleLayout puzzleLayout) {
     Range range = new Range(totalPuzzleSize, totalPuzzleSize + puzzleLayout.getAreaCount() - 1);
     totalPuzzleSize += puzzleLayout.getAreaCount();
-    rangePuzzleLayoutMap.put(range, puzzleLayout);
+    range.attach(puzzleLayout);
+    ranges.add(range);
     puzzleLayouts.add(puzzleLayout);
   }
 
   private Range getContainsRange(int position) {
-    for (Range range : rangePuzzleLayoutMap.keySet()) {
+    for (int i = 0; i < ranges.size(); i++) {
+      Range range = ranges.get(i);
       if (range.contains(position)) {
         return range;
       }
@@ -366,9 +352,9 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     return null;
   }
 
-  public RadioPuzzleLayout getPuzzleLayout(int position) {
+  public PuzzleLayout getPuzzleLayout(int position) {
     Range range = getContainsRange(position);
-    return range == null ? null : rangePuzzleLayoutMap.get(range);
+    return range == null ? null : range.puzzleLayout;
   }
 
   private int calculateTotalLength() {
@@ -433,23 +419,19 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     requestLayout();
   }
 
-  public int findFirstVisibleItemPosition() {
-    return firstVisibleItemPosition;
-  }
-
-  public int findLastVisibleItemPosition() {
-    return lastVisibleItemPosition;
-  }
-
   private static class Range {
     int start;
     int end;
+    PuzzleLayout puzzleLayout;
 
     Range() {
 
     }
 
     Range(int start, int end) {
+      if (start > end) {
+        throw new IllegalArgumentException("start can't greater than end");
+      }
       this.start = start;
       this.end = end;
     }
@@ -457,6 +439,10 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
     void set(int start, int end) {
       this.start = start;
       this.end = end;
+    }
+
+    void attach(PuzzleLayout puzzleLayout) {
+      this.puzzleLayout = puzzleLayout;
     }
 
     boolean contains(int value) {
