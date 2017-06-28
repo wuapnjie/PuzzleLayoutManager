@@ -34,6 +34,18 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
 
   private int orientation = VERTICAL;
 
+  public PuzzleLayoutManager() {
+    this(VERTICAL);
+  }
+
+  /**
+   * @param orientation Layout orientation. Should be {@link #HORIZONTAL} or {@link
+   * #VERTICAL}.@param orientation
+   */
+  public PuzzleLayoutManager(int orientation) {
+    setOrientation(orientation);
+  }
+
   @Override public RecyclerView.LayoutParams generateDefaultLayoutParams() {
     return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
         ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -105,10 +117,10 @@ public class PuzzleLayoutManager extends RecyclerView.LayoutManager {
         measureChildWithMargins(view, 0, 0);
 
         if (orientation == VERTICAL) {
-          layoutDecorated(view, area.left(), area.top() - verticalScrollOffset, area.right(),
+          layoutDecoratedWithMargins(view, area.left(), area.top() - verticalScrollOffset, area.right(),
               area.bottom() - verticalScrollOffset);
         } else {
-          layoutDecorated(view, area.left() - horizontalScrollOffset, area.top(),
+          layoutDecoratedWithMargins(view, area.left() - horizontalScrollOffset, area.top(),
               area.right() - horizontalScrollOffset, area.bottom());
         }
       }

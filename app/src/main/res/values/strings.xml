@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">PuzzleLayoutManager</string>
+  <string name="change">切换</string>
 </resources>

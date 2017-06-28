@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import com.nightmare.library.PuzzleLayout;
 import com.nightmare.library.PuzzleLayoutManager;
 import com.xiaopo.flying.puzzlelayoutmanager.model.Photo;
 import com.xiaopo.flying.puzzlelayoutmanager.model.PhotoManager;
@@ -27,19 +28,20 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
   private RecyclerView puzzleList;
   private PhotoAdapter adapter;
+  private PuzzleLayoutManager layoutManager;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     puzzleList = (RecyclerView) findViewById(R.id.puzzle_list);
 
-    PuzzleLayoutManager puzzleLayoutManager = new PuzzleLayoutManager();
-    puzzleLayoutManager.setOrientation(PuzzleLayoutManager.VERTICAL);
-    puzzleLayoutManager.addPuzzleLayout(new FirstPuzzleLayout(1.2f));
-    puzzleLayoutManager.addPuzzleLayout(new SecondPuzzleLayout(1.4f));
-    puzzleLayoutManager.addPuzzleLayout(new ThirdPuzzleLayout(1.3f));
-    puzzleLayoutManager.addPuzzleLayout(new ForthPuzzleLayout(1.1f));
-    puzzleList.setLayoutManager(puzzleLayoutManager);
+    layoutManager = new PuzzleLayoutManager();
+    layoutManager.setOrientation(PuzzleLayoutManager.VERTICAL);
+    layoutManager.addPuzzleLayout(new FirstPuzzleLayout(1.2f));
+    layoutManager.addPuzzleLayout(new SecondPuzzleLayout(1.4f));
+    layoutManager.addPuzzleLayout(new ThirdPuzzleLayout(1.3f));
+    layoutManager.addPuzzleLayout(new ForthPuzzleLayout(1.1f));
+    puzzleList.setLayoutManager(layoutManager);
     adapter = new PhotoAdapter();
     puzzleList.setAdapter(adapter);
     puzzleList.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -90,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
         adapter.refreshData(photos);
       }
     }.execute(new PhotoManager(this));
+  }
+
+  public void change(View view) {
+    layoutManager.setOrientation(layoutManager.getOrientation() == PuzzleLayoutManager.VERTICAL
+        ? PuzzleLayoutManager.HORIZONTAL : PuzzleLayoutManager.VERTICAL);
   }
 
   private static class GetAllPhotoTask extends AsyncTask<PhotoManager, Integer, List<Photo>> {
