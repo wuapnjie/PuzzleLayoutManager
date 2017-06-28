@@ -9,11 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import com.nightmare.library.PuzzleLayout;
 import com.nightmare.library.PuzzleLayoutManager;
 import com.xiaopo.flying.puzzlelayoutmanager.model.Photo;
 import com.xiaopo.flying.puzzlelayoutmanager.model.PhotoManager;
@@ -29,11 +28,24 @@ public class MainActivity extends AppCompatActivity {
   private RecyclerView puzzleList;
   private PhotoAdapter adapter;
   private PuzzleLayoutManager layoutManager;
+  private Toolbar toolbar;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     puzzleList = (RecyclerView) findViewById(R.id.puzzle_list);
+    toolbar = (Toolbar) findViewById(R.id.toolbar);
+    toolbar.inflateMenu(R.menu.main_menu);
+    toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+      @Override public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+          case R.id.item_change:
+            changeOrientation();
+            break;
+        }
+        return false;
+      }
+    });
 
     layoutManager = new PuzzleLayoutManager();
     layoutManager.setOrientation(PuzzleLayoutManager.VERTICAL);
@@ -94,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }.execute(new PhotoManager(this));
   }
 
-  public void change(View view) {
+  public void changeOrientation() {
     layoutManager.setOrientation(layoutManager.getOrientation() == PuzzleLayoutManager.VERTICAL
         ? PuzzleLayoutManager.HORIZONTAL : PuzzleLayoutManager.VERTICAL);
   }
